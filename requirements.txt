@@ -1,4 +1,1 @@
-# Este proyecto no requiere paquetes externos: solo usa la biblioteca
-# estándar de Python (tkinter, collections, random, json, time, csv,
-# pathlib). Se deja este archivo por completitud de la entrega, tal
-# como lo pide la consigna del proyecto.
+
