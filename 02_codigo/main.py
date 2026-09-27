@@ -22,14 +22,16 @@ from bfs import bfs
 from maze import (
     generar_mapa, generar_mapa_sencillo, generar_mapa_estres,
     guardar_mapa, cargar_mapa, construir_semilla,
-)
+) #IMPORTACIÓN DE FUNCIONES DE OTROS ARCHIVOS 
 
-# ----- Semilla del equipo: coloque aquí sus matrículas -----
-MATRICULA_1 = "20241110"
-MATRICULA_2 = "20241018"
+#  SEMILLLA DE LA BINA
+MATRICULA_1 = "20241110"#IVÁN
+MATRICULA_2 = "20241018"#ISAÍ PASCUAL CRUZ
 
-CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
-
+CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"#TRAE LA RUTA DE LA CARPETA, CON LOS MAPAS REALIZADOS
+CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados" #guarda la ruta de la carpeta de resultados
+#ESTABLECIMIENTO DE COLORES PARA CADA TIPO DE CELDA Y ESTADO DE BÚSQUEDA
+""" LOS CODIGOS DE NO PUEDEN SER MAYOR A 8 DIGITOS, SI NO MARCA ERROR"""
 COLORES = {
     "obstaculo": "#201F1F",
     "libre": "#fefefe",
@@ -118,8 +120,8 @@ class ExploradorBFS(tk.Tk):
         tk.Scale(barra, from_=400, to=10, orient="horizontal", showvalue=False,
                  variable=self.velocidad_ms, length=140).pack(side="left")
 
-        tk.Button(barra, text="Guardar mapa actual", command=self._guardar_mapa_actual)\
-            .pack(side="right")
+        """ tk.Button(barra, text="Guardar mapa actual", command=self._guardar_mapa_actual)\
+            .pack(side="right") """
 
         self._construir_leyenda(panel_derecho)
         self._construir_estado(panel_derecho)
@@ -193,7 +195,7 @@ class ExploradorBFS(tk.Tk):
         self.combo_mapa.set(nombre)
         if nombre == "Mapa principal":
             semilla = construir_semilla(MATRICULA_1, MATRICULA_2)
-            ruta = CARPETA_MAPAS / "mapa_principal.json"
+            ruta = CARPETA_MAPAS / "mapa_principal.json" #trae el mapa generado con las matrículas
             self.mapa_actual = self._cargar_o_generar(
                 ruta, lambda: generar_mapa(MATRICULA_1, MATRICULA_2), semilla)
         elif nombre == "Mapa sencillo":

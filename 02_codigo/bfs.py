@@ -1,38 +1,14 @@
-"""
-bfs.py
-Implementación propia de Búsqueda en Amplitud (BFS) para el Proyecto 1.
-
-Sigue el patrón visto en la Sesión 7 (teoría) y Sesión 8 (código):
-- frontera FIFO con collections.deque,
-- un diccionario 'parent' que funciona simultáneamente como registro de
-  alcanzados y como historial de padres (un estado se marca en el momento
-  en que ENTRA a la cola, no cuando se expande, tal como se explicó en
-  clase para evitar duplicados del mismo nivel),
-- prueba de meta al RETIRAR el nodo de la cola (no al generar), para
-  conservar la garantía de profundidad mínima real,
-- se registra, paso a paso, el estado de la frontera y de los visitados
-  para poder animarlos en la interfaz gráfica.
-
-No se utiliza ninguna función de biblioteca que resuelva el camino
-directamente (no se usa networkx, pathfinding ni scipy): la cola, el
-filtrado de repetidos y la reconstrucción del camino están escritos aquí.
-"""
-
+"""bfs.py - Implementación de Búsqueda en Amplitud (BFS)"""
 import time
 from collections import deque
 
-# Movimientos permitidos: arriba, abajo, izquierda, derecha (sin diagonales)
+# movimientos permitidos arriba, abajo, izquierda, derecha (no diagonales)
 DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
 def vecinos(grid, celda):
-    """Produce las celdas libres adyacentes en el orden de DIRECCIONES.
-
-    Comprueba que cada coordenada esté dentro del mapa y que su valor sea 0;
-    yield entrega cada vecino sin crear una lista intermedia.
-    Dependencias del proyecto: usa DIRECCIONES de este archivo y es llamada
-    por bfs(), también definida aquí. No importa funciones de otros módulos.
-    """
+    """crea las celdas libres en el orden de direciones
+    comprueba que cada coordenada esté dentro del mapa y que su valor sea 0 (libre)"""
     filas, columnas = len(grid), len(grid[0])
     f, c = celda
     for df, dc in DIRECCIONES:
@@ -42,28 +18,22 @@ def vecinos(grid, celda):
 
 
 def reconstruir_camino(parent, meta):
-    """Reconstruye el camino siguiendo los padres desde la meta.
-
-    Añade cada estado desde meta hasta inicio y luego invierte la lista para
-    devolverla en el orden de recorrido. El inicio debe tener padre None.
-    Dependencias del proyecto: la estructura parent la crea bfs() en este
-    archivo; no depende de otros módulos del proyecto.
-    """
+    """Reconstruye el camino siguiendo los padres desde la meta"""
     camino = []
     actual = meta
     while actual is not None:
         camino.append(actual)
-        actual = parent[actual]
+        actual = parent[actual] #estoa ayuda a evitar duplicados
     camino.reverse()
     return camino
 
 
 def bfs(grid, inicio, meta, registrar_pasos=True):
     """
-    Ejecuta BFS desde 'inicio' hasta 'meta' sobre 'grid' (0 = libre, 1 = obstáculo).
+    Ejecuta BFS desde inicio hasta meta(0->libre, 1->obstáculo)
 
     Convierte las coordenadas a tuplas, valida que inicio y meta sean libres,
-    y recorre la cuadrícula con una cola FIFO. El diccionario parent registra
+    y recorre la cuadrícula con una cola FIFO. El parent registra
     tanto los estados descubiertos como el padre de cada uno, evitando que un
     estado entre más de una vez. Al retirar un estado de la cola comprueba si
     es la meta; al encontrarla, reconstruye el camino de profundidad mínima.
@@ -124,7 +94,7 @@ def bfs(grid, inicio, meta, registrar_pasos=True):
 
         for vecino in vecinos(grid, estado):
             if vecino in parent:
-                continue  # ya alcanzado por una ruta de igual o menor profundidad
+                continue  #ya visistado(no se agrega de nuevo a la frontera)
             parent[vecino] = estado
             frontera.append(vecino)
 

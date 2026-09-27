@@ -1,14 +1,10 @@
 """
-maze.py
-Generación y validación de mapas (laberintos) para el Proyecto 1.
+maze.py-Generación y validación de mapas
 
 Contiene:
-- construcción determinista de la semilla a partir de ambas matrículas,
+- construcción determinista de la semilla a partir de ambas matrículas
 - generación del mapa principal cumpliendo todas las restricciones
-  obligatorias (tamaño, % de obstáculos, ruta óptima mínima, callejones
-  sin salida),
-- generación de los casos de prueba adicionales (sencillo y de estrés),
-- utilidades para guardar/cargar mapas en JSON (reproducibilidad).
+- generación de los casos de prueba adicionales
 """
 
 import json
@@ -17,35 +13,23 @@ from pathlib import Path
 
 from bfs import bfs  # se reutiliza el BFS propio para medir la ruta óptima
 
-DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)] #puntos cardinales
 
-LIBRE = 0
-OBSTACULO = 1
+LIBRE = 0 #celda libre
+OBSTACULO = 1 #celda con obstáculo
 
+"""Construye la semilla a partir de las matrículas
+    En main.py  comprueba la semilla de un mapa guardado"""
 
 def construir_semilla(matricula_1: str, matricula_2: str) -> int:
-    """
-    Construye una semilla entera y reproducible a partir de las matrículas
-    de ambos integrantes. Se ordenan antes de concatenar para que el
-    orden en que se escriban no cambie el resultado.
-
-    Dependencias del proyecto: no usa otros módulos del proyecto. La llaman
-    generar_mapa() aquí y main.py para comprobar la semilla de un mapa guardado.
-    """
-    m1 = str(matricula_1).strip()
+    m1 = str(matricula_1).strip() #Asigna la matrícula 1 a m1 y elimina espacios en blanco
     m2 = str(matricula_2).strip()
-    ordenadas = sorted([m1, m2])
-    return int("".join(ordenadas))
+    ordenadas = sorted([m1, m2]) #Ordena las matrículas
+    return int("".join(ordenadas))#devuelve la semilla como un entero concatenando las matrículas ordenadas
 
 
 def _conectados_desde(grid, inicio):
-    """Devuelve las celdas libres alcanzables desde inicio.
-
-    Usa una lista como pila para hacer un recorrido en profundidad y así
-    comprobar rápidamente si la meta pertenece a la misma zona conectada.
-    Dependencias del proyecto: usa DIRECCIONES y LIBRE de este archivo; la
-    llama generar_mapa(). No reemplaza el BFS de bfs.py que mide la ruta óptima.
-    """
+    """ ----Devuelve las celdas libres alcanzables desde inicio. llama generar_mapa()"""
     filas, columnas = len(grid), len(grid[0])
     visitados = {inicio}
     pila = [inicio]
@@ -62,12 +46,7 @@ def _conectados_desde(grid, inicio):
 
 
 def _tiene_callejones(grid):
-    """Indica si el mapa contiene una celda libre tipo callejón sin salida.
-
-    Considera callejón una celda con exactamente un vecino libre ortogonal.
-    Dependencias del proyecto: usa DIRECCIONES y LIBRE de este archivo; la
-    llama generar_mapa() para validar cada mapa candidato.
-    """
+    """Indica si el mapa contiene una celda libre tipo callejón sin salida"""
     filas, columnas = len(grid), len(grid[0])
     for f in range(filas):
         for c in range(columnas):
@@ -84,13 +63,9 @@ def _tiene_callejones(grid):
 
 
 def _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta):
-    """Construye un candidato colocando obstáculos en posiciones mezcladas.
-
+    """Construye un candidato colocando obstáculos en posiciones mezcladas
     Mantiene libres el inicio y la meta, calcula la cantidad de obstáculos a
-    partir del porcentaje y usa rng para mezclar las demás posiciones.
-    Dependencias del proyecto: usa LIBRE y la llama generar_mapa() en este
-    archivo. rng es un generador random.Random recibido como argumento.
-    """
+    partir del porcentaje"""
     grid = [[LIBRE for _ in range(columnas)] for _ in range(filas)]
     total = filas * columnas
     n_obstaculos = int(total * pct_obstaculos)
@@ -108,24 +83,7 @@ def _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta):
 def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
                   pct_obstaculos=0.28, longitud_minima=25, max_intentos=1000):
     """
-    Genera un mapa reproducible que cumple las condiciones obligatorias:
-      - filas x columnas >= 25 x 25
-      - porcentaje de obstáculos entre 20% y 35%
-      - existe al menos un camino de inicio a meta
-      - la ruta óptima (BFS) tiene longitud >= longitud_minima movimientos
-      - existen callejones sin salida
-
-    Con la misma semilla (mismas matrículas) siempre produce el mismo
-    mapa final, sin importar cuántas veces se ejecute.
-
-    Prueba candidatos reproducibles hasta hallar uno conectado, con la
-    longitud mínima pedida y al menos un callejón sin salida. Lanza ValueError
-    si las dimensiones o el porcentaje están fuera de los límites y
-    RuntimeError si agota max_intentos.
-    Dependencias del proyecto: importa bfs() desde bfs.py y usa aquí
-    construir_semilla(), _generar_intento(), _conectados_desde() y
-    _tiene_callejones(). La usan generar_mapa_estres(), main.py y
-    generar_mapas.py.
+    General el mapa principal, con el 28% de obstáculos y la ruta óptima de al menos 25 movimientos.
     """
     if filas < 25 or columnas < 25:
         raise ValueError("El mapa debe tener al menos 25 filas y 25 columnas.")
@@ -136,7 +94,8 @@ def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
     inicio, meta = (0, 0), (filas - 1, columnas - 1)
 
     for intento in range(max_intentos):
-        rng = random.Random(semilla_base + intento)
+        rng = random.Random(semilla_base + intento) #agrega el intento a la semilla para variar la generación
+        #inicializador matriz vacia 
         grid = _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta)
 
         if meta not in _conectados_desde(grid, inicio):
@@ -148,7 +107,7 @@ def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
 
         if not _tiene_callejones(grid):
             continue
-
+        #Estructura JSON que contiene los datos del mapa generado para su exportacion
         return {
             "semilla": semilla_base,
             "intento": intento,
@@ -168,15 +127,7 @@ def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
 
 
 def generar_mapa_sencillo():
-    """
-    Caso de prueba 'sencillo': mapa pequeño (7x7) cuya ruta óptima puede
-    verificarse a mano. Un muro vertical con un único hueco obliga a
-    pasar por una celda concreta, pero la ruta óptima sigue siendo la
-    distancia Manhattan (0,0) -> (6,6) = 12 movimientos.
-
-    Dependencias del proyecto: usa LIBRE y OBSTACULO de este archivo; no
-    llama a otros módulos. La usan main.py y generar_mapas.py.
-    """
+    """Genera un mapa pequeño y verificable a mano, con un único callejón """
     filas, columnas = 7, 7
     grid = [[LIBRE for _ in range(columnas)] for _ in range(filas)]
     for f in range(filas):
@@ -197,13 +148,7 @@ def generar_mapa_sencillo():
 
 def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
                          pct_obstaculos=0.35):
-    """Genera un mapa grande con el porcentaje máximo de obstáculos.
-
-    Reutiliza las validaciones del generador principal, pero solicita solo
-    una longitud mínima de un movimiento para no forzar un camino largo.
-    Dependencias del proyecto: llama generar_mapa() de este archivo, que a su
-    vez utiliza bfs.py. La usan main.py y generar_mapas.py.
-    """
+    """Genera un mapa grande con el porcentaje máximo de obstáculos. Reutiliza las funciones de generar_mapa() y construir_semilla() para mantener la consistencia."""
     return generar_mapa(
         matricula_1, matricula_2,
         filas=filas, columnas=columnas,
@@ -213,13 +158,10 @@ def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
 
 
 def guardar_mapa(mapa: dict, ruta: str):
-    """Serializa un mapa como JSON en la ruta indicada.
-
-    Crea primero la carpeta padre si aún no existe y conserva caracteres
-    Unicode en el archivo. Dependencias del proyecto: usa json y Path de la
-    biblioteca estándar. La llaman main.py y generar_mapas.py.
-    """
+    """guarda el mapa en un archivo JSON"""
+    #verifica si la carpeta existe, si no la crea
     Path(ruta).parent.mkdir(parents=True, exist_ok=True)
+    ##Guarda el mapa en formato JSON
     with open(ruta, "w", encoding="utf-8") as f:
         json.dump(mapa, f, ensure_ascii=False, indent=2)
 

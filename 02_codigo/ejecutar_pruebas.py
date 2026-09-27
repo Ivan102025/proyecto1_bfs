@@ -12,8 +12,8 @@ from pathlib import Path
 from bfs import bfs
 from maze import cargar_mapa
 
-CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
-CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados"
+CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas" #extrae la ruta de la carpeta de los mapas
+CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados" #guarda la ruta de la carpeta de resultados
 
 CASOS = [
     ("Mapa principal", "mapa_principal.json"),
