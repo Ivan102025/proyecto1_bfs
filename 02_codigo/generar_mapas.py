@@ -6,16 +6,11 @@ sencillo verificable a mano y un caso de estrés con mayor porcentaje de
 obstáculos. Con la misma semilla siempre se genera el mismo mapa
 principal, sin importar cuántas veces se ejecute este script.
 """
-
 from pathlib import Path
-
 from maze import generar_mapa, generar_mapa_sencillo, generar_mapa_estres, guardar_mapa
-
 MATRICULA_1 = "20241110"
 MATRICULA_2 = "20241018"
-
 CARPETA = Path(__file__).resolve().parent.parent / "03_mapas"
-
 
 def main():
     print("Generando mapa principal (25x25, semilla de ambas matrículas)...")

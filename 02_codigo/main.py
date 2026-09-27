@@ -49,7 +49,7 @@ class ExploradorBFS(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Explorador visual con búsqueda en amplitud (BFS)")
-        self.geometry("1150x760")
+        """ self.geometry("1150x760") """
         self.minsize(950, 650)
 
         self.mapa_actual = None
