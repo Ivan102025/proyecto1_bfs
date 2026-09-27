@@ -1,6 +1,6 @@
 """
 main.py
-Explorador visual con búsqueda en amplitud (BFS) - Proyecto 1
+Explorador visual con Búsqueda en Amplitud (BFS) - Proyecto 1
 Fundamentos de Inteligencia Artificial
 
 Interfaz gráfica en Tkinter (sin dependencias externas) que permite:
@@ -31,13 +31,13 @@ MATRICULA_2 = "20241018"
 CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
 
 COLORES = {
-    "obstaculo": "#2b2b2b",
-    "libre": "#ffffff",
-    "inicio": "#2e7d32",
-    "meta": "#c62828",
+    "obstaculo": "#201F1F",
+    "libre": "#fefefe",
+    "inicio": "#05fb11",
+    "meta": "#ff0404",
     "actual": "#fb8c00",
-    "frontera": "#ffee58",
-    "visitado": "#90caf9",
+    "frontera": "#fff177",
+    "visitado": "#1e94f5",
     "camino": "#8e24aa",
     "rejilla": "#d9d9d9",
 }
@@ -47,9 +47,16 @@ MAX_FRONTERA_MOSTRADA = 12  # elementos que se listan antes de resumir el resto
 
 class ExploradorBFS(tk.Tk):
     def __init__(self):
+        """Inicializa la ventana, su estado y los componentes de la interfaz.
+
+        Prepara las variables de mapa, búsqueda y reproducción, construye los
+        paneles y carga el mapa principal. Dependencias del proyecto: usa
+        métodos de esta clase y _cargar_mapa_por_nombre(); la carga y
+        generación se delegan a las funciones importadas desde maze.py.
+        """
         super().__init__()
-        self.title("Explorador visual con búsqueda en amplitud (BFS)")
-        """ self.geometry("1150x760") """
+        self.title("Explorador visual con Búsqueda en Amplitud (BFS)")
+        self.geometry("1150x760")
         self.minsize(950, 650)
 
         self.mapa_actual = None
@@ -66,6 +73,14 @@ class ExploradorBFS(tk.Tk):
     # Construcción de la interfaz
     # ---------------------------------------------------------------
     def _construir_layout(self):
+        """Crea la distribución principal y conecta controles con acciones.
+
+        Organiza el lienzo del mapa, el panel informativo, el selector, los
+        botones, el control de velocidad y el botón para guardar. También
+        registra el redibujado del mapa al cambiar el tamaño del lienzo.
+        Dependencias del proyecto: llama a los métodos de construcción de
+        panel de esta clase y usa COLORES; Tkinter proporciona los widgets.
+        """
         contenedor = tk.Frame(self)
         contenedor.pack(fill="both", expand=True, padx=10, pady=10)
         contenedor.columnconfigure(0, weight=1)
@@ -111,6 +126,11 @@ class ExploradorBFS(tk.Tk):
         self._construir_metricas(panel_derecho)
 
     def _construir_leyenda(self, padre):
+        """Añade al panel una muestra de color por cada estado del mapa.
+
+        Dependencias del proyecto: lee las etiquetas y colores de COLORES y
+        es llamada por _construir_layout() de esta clase. Usa widgets Tkinter.
+        """
         marco = tk.LabelFrame(padre, text="Leyenda", padx=8, pady=8)
         marco.pack(fill="x", pady=(0, 10))
         elementos = [
@@ -132,6 +152,11 @@ class ExploradorBFS(tk.Tk):
             tk.Label(fila, text=etiqueta, anchor="w").pack(side="left")
 
     def _construir_estado(self, padre):
+        """Crea las etiquetas de frontera FIFO y número de paso.
+
+        Dependencias del proyecto: es llamada por _construir_layout() y deja
+        en self las etiquetas que actualiza _actualizar_panel_paso().
+        """
         marco = tk.LabelFrame(padre, text="Frontera (orden FIFO)", padx=8, pady=8)
         marco.pack(fill="x", pady=(0, 10))
         self.texto_frontera = tk.Label(marco, text="—", justify="left", anchor="w",
@@ -141,6 +166,11 @@ class ExploradorBFS(tk.Tk):
         self.texto_paso.pack(fill="x", pady=(6, 0))
 
     def _construir_metricas(self, padre):
+        """Crea el panel donde se presentarán las métricas de BFS.
+
+        Dependencias del proyecto: es llamada por _construir_layout(); la
+        etiqueta creada se actualiza en _mostrar_metricas_finales().
+        """
         marco = tk.LabelFrame(padre, text="Métricas al finalizar", padx=8, pady=8)
         marco.pack(fill="both", expand=True)
         self.texto_metricas = tk.Label(marco, text="Ejecute la búsqueda para ver métricas.",
@@ -151,6 +181,15 @@ class ExploradorBFS(tk.Tk):
     # Carga de mapas
     # ---------------------------------------------------------------
     def _cargar_mapa_por_nombre(self, nombre):
+        """Carga el mapa seleccionado o permite elegir un JSON personalizado.
+
+        Para los mapas conocidos delega en _cargar_o_generar(); para un
+        archivo personalizado abre el diálogo y lo carga. Después reinicia la
+        búsqueda y la visualización.
+        Dependencias del proyecto: usa helpers importados desde maze.py
+        (construir_semilla, generadores y cargar_mapa) y métodos de esta clase
+        (_cargar_o_generar y reiniciar).
+        """
         self.combo_mapa.set(nombre)
         if nombre == "Mapa principal":
             semilla = construir_semilla(MATRICULA_1, MATRICULA_2)
@@ -173,6 +212,14 @@ class ExploradorBFS(tk.Tk):
         self.reiniciar()
 
     def _cargar_o_generar(self, ruta: Path, generador, semilla_esperada):
+        """Reutiliza un mapa JSON válido o genera y guarda uno nuevo.
+
+        Si el archivo existe, lo carga y comprueba su semilla cuando se
+        proporcionó una esperada. Si no coincide, llama al generador recibido
+        y guarda el resultado en ruta.
+        Dependencias del proyecto: cargar_mapa() y guardar_mapa() proceden de
+        maze.py; el generador se recibe como argumento desde esta clase.
+        """
         if ruta.exists():
             mapa = cargar_mapa(str(ruta))
             if semilla_esperada is None or mapa.get("semilla") == semilla_esperada:
@@ -182,6 +229,12 @@ class ExploradorBFS(tk.Tk):
         return mapa
 
     def _guardar_mapa_actual(self):
+        """Abre el diálogo de guardado y persiste el mapa activo si se elige ruta.
+
+        Si no hay mapa o se cancela el diálogo, no realiza cambios.
+        Dependencias del proyecto: llama a guardar_mapa() de maze.py y usa los
+        diálogos de archivo y mensaje de Tkinter.
+        """
         if not self.mapa_actual:
             return
         ruta = filedialog.asksaveasfilename(defaultextension=".json",
@@ -194,6 +247,14 @@ class ExploradorBFS(tk.Tk):
     # Control de la búsqueda
     # ---------------------------------------------------------------
     def reiniciar(self):
+        """Vuelve a ejecutar BFS y restablece la animación al estado inicial.
+
+        Detiene la reproducción, toma grid, inicio y meta del mapa actual,
+        calcula de nuevo el resultado con instantáneas y reinicia el índice.
+        Si no se generó ningún paso, muestra directamente el resultado final.
+        Dependencias del proyecto: importa bfs() desde bfs.py y llama a los
+        métodos de dibujo, panel y métricas de esta clase.
+        """
         self.reproduciendo = False
         if self.mapa_actual is None:
             return
@@ -211,15 +272,32 @@ class ExploradorBFS(tk.Tk):
             self._mostrar_metricas_finales()
 
     def iniciar(self):
+        """Inicia la reproducción automática si existen pasos de búsqueda.
+
+        Dependencias del proyecto: activa el estado de reproducción y llama
+        al método _reproducir() de esta clase.
+        """
         if not self.pasos:
             return
         self.reproduciendo = True
         self._reproducir()
 
     def pausar(self):
+        """Detiene la reproducción automática sin borrar el paso actual.
+
+        Dependencias del proyecto: modifica self.reproduciendo, estado que
+        consulta _reproducir() de esta clase. No llama a otros módulos.
+        """
         self.reproduciendo = False
 
     def _reproducir(self):
+        """Avanza la animación y programa el siguiente avance si corresponde.
+
+        Solo continúa si reproduciendo es True. Tkinter.after() programa el
+        siguiente ciclo con el intervalo elegido por el usuario.
+        Dependencias del proyecto: llama avanzar_paso() de esta clase y usa
+        after() y velocidad_ms, proporcionados por Tkinter y la interfaz.
+        """
         if not self.reproduciendo:
             return
         hay_mas = self.avanzar_paso()
@@ -229,7 +307,15 @@ class ExploradorBFS(tk.Tk):
             self.reproduciendo = False
 
     def avanzar_paso(self):
-        """Avanza un paso de BFS. Devuelve True si aún quedan pasos después de este."""
+        """Avanza un paso de BFS y señala si la reproducción puede continuar.
+
+        Incrementa el índice, redibuja el mapa y actualiza la frontera. Al
+        llegar a la meta o al último paso muestra las métricas y devuelve
+        False; si quedan pasos devuelve True.
+        Dependencias del proyecto: usa los registros creados por bfs.py y
+        llama a _dibujar(), _actualizar_panel_paso() y
+        _mostrar_metricas_finales() de esta clase.
+        """
         if self.indice_paso + 1 >= len(self.pasos):
             return False
         self.indice_paso += 1
@@ -246,6 +332,15 @@ class ExploradorBFS(tk.Tk):
     # Dibujo
     # ---------------------------------------------------------------
     def _dibujar(self):
+        """Dibuja el mapa y los estados de BFS correspondientes al paso actual.
+
+        Calcula el tamaño de cada celda, determina qué color corresponde a
+        cada posición y pinta la cuadrícula en el Canvas. Inicio y meta
+        prevalecen visualmente sobre los demás estados.
+        Dependencias del proyecto: usa COLORES y los pasos/resultados con el
+        formato que produce bfs.py. La invocan métodos de esta clase y el
+        evento de cambio de tamaño del Canvas.
+        """
         self.canvas.delete("all")
         if self.mapa_actual is None:
             return
@@ -298,6 +393,14 @@ class ExploradorBFS(tk.Tk):
                                               outline=COLORES["rejilla"])
 
     def _actualizar_panel_paso(self):
+        """Actualiza el contador y muestra la frontera del paso seleccionado.
+
+        Trunca la lista visible cuando supera MAX_FRONTERA_MOSTRADA e indica
+        cuántos estados contiene la frontera completa.
+        Dependencias del proyecto: usa self.pasos (registros de bfs.py), la
+        constante MAX_FRONTERA_MOSTRADA y las etiquetas creadas por
+        _construir_estado() en esta clase.
+        """
         total = len(self.pasos)
         actual = self.indice_paso + 1
         self.texto_paso.config(text=f"Paso: {actual} / {total}")
@@ -312,6 +415,13 @@ class ExploradorBFS(tk.Tk):
         self.texto_frontera.config(text=texto)
 
     def _mostrar_metricas_finales(self):
+        """Presenta el resultado y las métricas calculadas por BFS.
+
+        Informa si se encontró camino y muestra profundidad, conteos de
+        estados, frontera máxima y duración en milisegundos.
+        Dependencias del proyecto: lee self.resultado, producido por bfs.py,
+        y actualiza la etiqueta creada por _construir_metricas() en esta clase.
+        """
         r = self.resultado
         estado = "Solución encontrada" if r["camino"] else "Sin solución (frontera agotada)"
         texto = (

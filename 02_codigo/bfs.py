@@ -26,8 +26,13 @@ DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
 
 def vecinos(grid, celda):
-    """Genera los vecinos transitables de una celda, en orden fijo
-    (arriba, abajo, izquierda, derecha) para que la traza sea reproducible."""
+    """Produce las celdas libres adyacentes en el orden de DIRECCIONES.
+
+    Comprueba que cada coordenada esté dentro del mapa y que su valor sea 0;
+    yield entrega cada vecino sin crear una lista intermedia.
+    Dependencias del proyecto: usa DIRECCIONES de este archivo y es llamada
+    por bfs(), también definida aquí. No importa funciones de otros módulos.
+    """
     filas, columnas = len(grid), len(grid[0])
     f, c = celda
     for df, dc in DIRECCIONES:
@@ -37,7 +42,13 @@ def vecinos(grid, celda):
 
 
 def reconstruir_camino(parent, meta):
-    """Invierte la cadena de padres desde la meta hasta el inicio."""
+    """Reconstruye el camino siguiendo los padres desde la meta.
+
+    Añade cada estado desde meta hasta inicio y luego invierte la lista para
+    devolverla en el orden de recorrido. El inicio debe tener padre None.
+    Dependencias del proyecto: la estructura parent la crea bfs() en este
+    archivo; no depende de otros módulos del proyecto.
+    """
     camino = []
     actual = meta
     while actual is not None:
@@ -50,6 +61,17 @@ def reconstruir_camino(parent, meta):
 def bfs(grid, inicio, meta, registrar_pasos=True):
     """
     Ejecuta BFS desde 'inicio' hasta 'meta' sobre 'grid' (0 = libre, 1 = obstáculo).
+
+    Convierte las coordenadas a tuplas, valida que inicio y meta sean libres,
+    y recorre la cuadrícula con una cola FIFO. El diccionario parent registra
+    tanto los estados descubiertos como el padre de cada uno, evitando que un
+    estado entre más de una vez. Al retirar un estado de la cola comprueba si
+    es la meta; al encontrarla, reconstruye el camino de profundidad mínima.
+    Si registrar_pasos es True, guarda instantáneas de la búsqueda para la
+    animación; en False evita ese almacenamiento adicional.
+
+    Dependencias del proyecto: usa vecinos() y reconstruir_camino() de este
+    archivo. maze.py, main.py y ejecutar_pruebas.py importan esta función.
 
     Devuelve un diccionario con:
       camino            -> lista de celdas desde inicio hasta meta, o None

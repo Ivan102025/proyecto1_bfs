@@ -28,6 +28,9 @@ def construir_semilla(matricula_1: str, matricula_2: str) -> int:
     Construye una semilla entera y reproducible a partir de las matrículas
     de ambos integrantes. Se ordenan antes de concatenar para que el
     orden en que se escriban no cambie el resultado.
+
+    Dependencias del proyecto: no usa otros módulos del proyecto. La llaman
+    generar_mapa() aquí y main.py para comprobar la semilla de un mapa guardado.
     """
     m1 = str(matricula_1).strip()
     m2 = str(matricula_2).strip()
@@ -36,8 +39,13 @@ def construir_semilla(matricula_1: str, matricula_2: str) -> int:
 
 
 def _conectados_desde(grid, inicio):
-    """Recorrido auxiliar (pila) solo para validar conectividad al
-    generar el mapa; el BFS que cuenta para la rúbrica es el de bfs.py."""
+    """Devuelve las celdas libres alcanzables desde inicio.
+
+    Usa una lista como pila para hacer un recorrido en profundidad y así
+    comprobar rápidamente si la meta pertenece a la misma zona conectada.
+    Dependencias del proyecto: usa DIRECCIONES y LIBRE de este archivo; la
+    llama generar_mapa(). No reemplaza el BFS de bfs.py que mide la ruta óptima.
+    """
     filas, columnas = len(grid), len(grid[0])
     visitados = {inicio}
     pila = [inicio]
@@ -54,7 +62,12 @@ def _conectados_desde(grid, inicio):
 
 
 def _tiene_callejones(grid):
-    """Un callejón sin salida = celda libre con exactamente un vecino libre."""
+    """Indica si el mapa contiene una celda libre tipo callejón sin salida.
+
+    Considera callejón una celda con exactamente un vecino libre ortogonal.
+    Dependencias del proyecto: usa DIRECCIONES y LIBRE de este archivo; la
+    llama generar_mapa() para validar cada mapa candidato.
+    """
     filas, columnas = len(grid), len(grid[0])
     for f in range(filas):
         for c in range(columnas):
@@ -71,6 +84,13 @@ def _tiene_callejones(grid):
 
 
 def _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta):
+    """Construye un candidato colocando obstáculos en posiciones mezcladas.
+
+    Mantiene libres el inicio y la meta, calcula la cantidad de obstáculos a
+    partir del porcentaje y usa rng para mezclar las demás posiciones.
+    Dependencias del proyecto: usa LIBRE y la llama generar_mapa() en este
+    archivo. rng es un generador random.Random recibido como argumento.
+    """
     grid = [[LIBRE for _ in range(columnas)] for _ in range(filas)]
     total = filas * columnas
     n_obstaculos = int(total * pct_obstaculos)
@@ -97,6 +117,15 @@ def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
 
     Con la misma semilla (mismas matrículas) siempre produce el mismo
     mapa final, sin importar cuántas veces se ejecute.
+
+    Prueba candidatos reproducibles hasta hallar uno conectado, con la
+    longitud mínima pedida y al menos un callejón sin salida. Lanza ValueError
+    si las dimensiones o el porcentaje están fuera de los límites y
+    RuntimeError si agota max_intentos.
+    Dependencias del proyecto: importa bfs() desde bfs.py y usa aquí
+    construir_semilla(), _generar_intento(), _conectados_desde() y
+    _tiene_callejones(). La usan generar_mapa_estres(), main.py y
+    generar_mapas.py.
     """
     if filas < 25 or columnas < 25:
         raise ValueError("El mapa debe tener al menos 25 filas y 25 columnas.")
@@ -144,6 +173,9 @@ def generar_mapa_sencillo():
     verificarse a mano. Un muro vertical con un único hueco obliga a
     pasar por una celda concreta, pero la ruta óptima sigue siendo la
     distancia Manhattan (0,0) -> (6,6) = 12 movimientos.
+
+    Dependencias del proyecto: usa LIBRE y OBSTACULO de este archivo; no
+    llama a otros módulos. La usan main.py y generar_mapas.py.
     """
     filas, columnas = 7, 7
     grid = [[LIBRE for _ in range(columnas)] for _ in range(filas)]
@@ -165,9 +197,13 @@ def generar_mapa_sencillo():
 
 def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
                          pct_obstaculos=0.35):
-    """Caso de estrés: mismo procedimiento del mapa principal, pero con
-    el máximo porcentaje de obstáculos permitido (35%) y sin exigir una
-    longitud mínima particular."""
+    """Genera un mapa grande con el porcentaje máximo de obstáculos.
+
+    Reutiliza las validaciones del generador principal, pero solicita solo
+    una longitud mínima de un movimiento para no forzar un camino largo.
+    Dependencias del proyecto: llama generar_mapa() de este archivo, que a su
+    vez utiliza bfs.py. La usan main.py y generar_mapas.py.
+    """
     return generar_mapa(
         matricula_1, matricula_2,
         filas=filas, columnas=columnas,
@@ -177,11 +213,22 @@ def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
 
 
 def guardar_mapa(mapa: dict, ruta: str):
+    """Serializa un mapa como JSON en la ruta indicada.
+
+    Crea primero la carpeta padre si aún no existe y conserva caracteres
+    Unicode en el archivo. Dependencias del proyecto: usa json y Path de la
+    biblioteca estándar. La llaman main.py y generar_mapas.py.
+    """
     Path(ruta).parent.mkdir(parents=True, exist_ok=True)
     with open(ruta, "w", encoding="utf-8") as f:
         json.dump(mapa, f, ensure_ascii=False, indent=2)
 
 
 def cargar_mapa(ruta: str) -> dict:
+    """Lee un archivo JSON de mapa y devuelve sus datos como diccionario.
+
+    Dependencias del proyecto: usa json de la biblioteca estándar. La llaman
+    main.py y ejecutar_pruebas.py; no requiere otro módulo del proyecto.
+    """
     with open(ruta, "r", encoding="utf-8") as f:
         return json.load(f)

@@ -21,8 +21,17 @@ CASOS = [
     ("Mapa de estrés", "mapa_estres.json"),
 ]
 
-
 def main():
+    """Ejecuta BFS para cada mapa disponible y exporta las métricas.
+
+    Recorre CASOS, omite con un aviso los archivos que no existan y carga los
+    demás mapas. Ejecuta la búsqueda sin registrar pasos, imprime resultados
+    y, si procesó al menos un mapa, escribe las filas en metricas.csv. La
+    verificación del mapa sencillo que se imprime al final es informativa;
+    no compara automáticamente la longitud calculada con 12.
+    Dependencias del proyecto: importa bfs() desde bfs.py y cargar_mapa()
+    desde maze.py. También usa csv y Path de la biblioteca estándar.
+    """
     CARPETA_RESULTADOS.mkdir(parents=True, exist_ok=True)
     filas_csv = []
 
