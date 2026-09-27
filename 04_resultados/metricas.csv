@@ -1,0 +1,4 @@
+mapa,filas,columnas,solucion_encontrada,longitud_camino,nodos_generados,nodos_expandidos,estados_visitados,frontera_maxima,tiempo_ms
+Mapa principal,25,25,True,52,440,439,440,26,0.448
+Mapa sencillo,7,7,True,12,43,43,43,7,0.044
+Mapa de estrés,30,30,True,60,391,390,391,17,0.313
