@@ -10,7 +10,6 @@ MATRICULA_2 = "20241018"  # ISAÍ PASCUAL CRUZ
 CARPETA = Path(__file__).resolve().parent.parent / "03_mapas"
 
 def main():
-    print("Generando mapa principal (25x25, semilla de ambas matrículas)...")
     principal = generar_mapa(MATRICULA_1, MATRICULA_2)
     guardar_mapa(principal, str(CARPETA / "mapa_principal.json"))
     print(f"  Semilla: {principal['semilla']}")

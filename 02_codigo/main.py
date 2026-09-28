@@ -20,7 +20,8 @@ from bfs import bfs
 from maze import (
     generar_mapa, generar_mapa_sencillo, generar_mapa_estres,
     guardar_mapa, cargar_mapa, construir_semilla,
-)
+)#esto hace que se pueda usar la funcion de generar mapa y cargar mapa desde maze.py
+#osea que los importa a main.py para poder usarlos en la interfaz grafica
 
 # ----- Semilla del equipo: matrículas de ambos integrantes -----
 MATRICULA_1 = "20241110"  # IVÁN
