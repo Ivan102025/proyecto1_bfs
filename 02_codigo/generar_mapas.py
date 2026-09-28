@@ -1,13 +1,15 @@
 """
-generar_mapas.py - Genera y guarda en 03_mapas/ los tres mapas de prueba"""
+generar_mapas.py - Genera y guarda en 03_mapas/ los tres mapas de prueba
+"""
 from pathlib import Path
-from maze import generar_mapa, generar_mapa_sencillo, generar_mapa_estres, guardar_mapa #funciones extraídas de maze.py
-MATRICULA_1 = "20241110"
-MATRICULA_2 = "20241018"
+from maze import generar_mapa, generar_mapa_sencillo, generar_mapa_estres, guardar_mapa
+
+MATRICULA_1 = "20241110"  # IVÁN
+MATRICULA_2 = "20241018"  # ISAÍ PASCUAL CRUZ
+
 CARPETA = Path(__file__).resolve().parent.parent / "03_mapas"
 
 def main():
-
     print("Generando mapa principal (25x25, semilla de ambas matrículas)...")
     principal = generar_mapa(MATRICULA_1, MATRICULA_2)
     guardar_mapa(principal, str(CARPETA / "mapa_principal.json"))

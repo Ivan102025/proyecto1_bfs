@@ -1,19 +1,14 @@
 """
-ejecutar_pruebas.py
-Corre BFS sobre los tres mapas de prueba (sin necesidad de la interfaz
-gráfica) y guarda un resumen de métricas en 04_resultados/metricas.csv,
-además de imprimir en pantalla una verificación manual para el caso
-sencillo. Útil para incluir evidencia en el reporte técnico.
+ejecutar_pruebas.py - Corre BFS sobre los tres mapas de prueba
 """
-
 import csv
 from pathlib import Path
 
 from bfs import bfs
 from maze import cargar_mapa
 
-CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas" #extrae la ruta de la carpeta de los mapas
-CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados" #guarda la ruta de la carpeta de resultados
+CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
+CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados"
 
 CASOS = [
     ("Mapa principal", "mapa_principal.json"),
@@ -21,17 +16,10 @@ CASOS = [
     ("Mapa de estrés", "mapa_estres.json"),
 ]
 
-def main():
-    """Ejecuta BFS para cada mapa disponible y exporta las métricas.
+RUTA_OPTIMA_ESPERADA_SENCILLO = 12  # calculada a mano: distancia Manhattan (0,0)->(6,6)
 
-    Recorre CASOS, omite con un aviso los archivos que no existan y carga los
-    demás mapas. Ejecuta la búsqueda sin registrar pasos, imprime resultados
-    y, si procesó al menos un mapa, escribe las filas en metricas.csv. La
-    verificación del mapa sencillo que se imprime al final es informativa;
-    no compara automáticamente la longitud calculada con 12.
-    Dependencias del proyecto: importa bfs() desde bfs.py y cargar_mapa()
-    desde maze.py. También usa csv y Path de la biblioteca estándar.
-    """
+
+def main():
     CARPETA_RESULTADOS.mkdir(parents=True, exist_ok=True)
     filas_csv = []
 
@@ -77,13 +65,13 @@ def main():
             escritor.writerows(filas_csv)
         print(f"\nMétricas guardadas en: {ruta_csv}")
 
-    # Verificación manual del caso sencillo (7x7, muro con un único hueco
-    # en la fila 3): desde (0,0) hasta (6,6) sin nada más que rodear, la
-    # distancia Manhattan es 6 + 6 = 12, y el hueco del muro cae justo
-    # sobre esa diagonal directa, así que la ruta óptima esperada a mano
-    # es de 12 movimientos.
-    print("\nVerificación manual (mapa sencillo): ruta óptima esperada = 12 movimientos.")
-
+    resultado_sencillo = next((f for f in filas_csv if f["mapa"] == "Mapa sencillo"), None)
+    if resultado_sencillo:
+        obtenido = resultado_sencillo["longitud_camino"]
+        coincide = obtenido == RUTA_OPTIMA_ESPERADA_SENCILLO
+        print(f"\nVerificación manual (mapa sencillo): esperado={RUTA_OPTIMA_ESPERADA_SENCILLO}, "
+              f"obtenido={obtenido}, coincide={coincide}")
+        assert coincide, "La longitud calculada no coincide con la verificación manual."
 
 if __name__ == "__main__":
     main()
