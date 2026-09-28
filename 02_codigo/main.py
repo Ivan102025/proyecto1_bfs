@@ -1,17 +1,3 @@
-"""
-main.py - Explorador visual con Búsqueda en Amplitud (BFS) - Proyecto 1
-
-Interfaz gráfica en Tkinter (sin dependencias externas) que permite:
-- elegir uno de los mapas de prueba (principal, sencillo, estrés) o cargar
-  un mapa .json guardado previamente,
-- ejecutar BFS en modo automático o paso a paso,
-- iniciar, pausar, avanzar, reiniciar y cambiar la velocidad,
-- ver en todo momento: obstáculos, celdas libres, inicio, meta, nodo
-  actual, frontera abierta, estados visitados y camino final, con leyenda,
-- consultar la frontera en orden FIFO (truncada si es muy grande),
-- consultar al finalizar las métricas exigidas por la rúbrica.
-"""
-
 import sys
 import tkinter as tk
 from tkinter import filedialog
