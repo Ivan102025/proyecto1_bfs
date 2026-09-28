@@ -1,1 +1,10 @@
 
+# main.py (version de escritorio) no necesita nada externo, solo la
+# libreria estandar de Python: tkinter, collections, random, json,
+# time, csv, pathlib.
+#
+# matplotlib solo lo usa el notebook de Colab, para dibujar las
+# animaciones (Colab no tiene tkinter). Si Colab lo corres tal cual,
+# ya viene instalado y no hace falta este archivo; se deja aquí solo
+# para el caso de que alguien quiera correr el notebook fuera de Colab.
+matplotlib>=3.5
