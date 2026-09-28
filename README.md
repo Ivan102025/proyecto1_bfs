@@ -5,7 +5,7 @@ Proyecto 1 - Fundamentos de Inteligencia Artificial
 Universidad Tecnológica de la Huasteca Hidalguense
 
 ## Integrantes
-- Iván (apellido) - Matrícula 20241110
+- Iván Bautista Martinez - Matrícula 20241110
 - Isaí Pascual Cruz - Matrícula 20241018
 
 ## Versión de Python
