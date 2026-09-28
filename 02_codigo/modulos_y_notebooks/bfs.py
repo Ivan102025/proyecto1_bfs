@@ -1,12 +1,3 @@
-"""
-bfs.py - Búsqueda en Amplitud (BFS) propia, sin librerías externas.
-
-Cola FIFO con deque. El diccionario 'parent' marca un estado como
-visitado en el momento en que ENTRA a la cola (no cuando se expande),
-y guarda además quién es su padre. La meta se comprueba al RETIRAR
-un estado de la cola, para garantizar la profundidad mínima real.
-"""
-
 import time
 from collections import deque
 
