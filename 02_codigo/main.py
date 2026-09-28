@@ -12,22 +12,26 @@ Interfaz gráfica en Tkinter (sin dependencias externas) que permite:
 - consultar al finalizar las métricas exigidas por la rúbrica.
 """
 
+import sys
 import tkinter as tk
 from tkinter import filedialog
 from pathlib import Path
+
+
+sys.path.insert(0, str(Path(__file__).resolve().parent / "modulos_y_notebooks"))
 
 from bfs import bfs
 from maze import (
     generar_mapa, generar_mapa_sencillo, generar_mapa_estres,
     guardar_mapa, cargar_mapa, construir_semilla,
-)#esto hace que se pueda usar la funcion de generar mapa y cargar mapa desde maze.py
-#osea que los importa a main.py para poder usarlos en la interfaz grafica
+)
 
-# ----- Semilla del equipo: matrículas de ambos integrantes -----
+
+# ----- Semilla del equipo:  -----
 MATRICULA_1 = "20241110"  # IVÁN
 MATRICULA_2 = "20241018"  # ISAÍ PASCUAL CRUZ
 
-CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
+CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas" / "mapa_principal_y_pruebas"
 
 COLORES = {
     "obstaculo": "#201F1F",
@@ -156,15 +160,15 @@ class ExploradorBFS(tk.Tk):
         self.combo_mapa.set(nombre)
         if nombre == "Mapa principal":
             semilla = construir_semilla(MATRICULA_1, MATRICULA_2)
-            ruta = CARPETA_MAPAS / "mapa_principal.json"
+            ruta = CARPETA_MAPAS / "1_mapa_principal.json"
             self.mapa_actual = self._cargar_o_generar(
                 ruta, lambda: generar_mapa(MATRICULA_1, MATRICULA_2), semilla)
         elif nombre == "Mapa sencillo":
-            ruta = CARPETA_MAPAS / "mapa_sencillo.json"
+            ruta = CARPETA_MAPAS / "2_mapa_sencillo.json"
             self.mapa_actual = self._cargar_o_generar(ruta, generar_mapa_sencillo, None)
         elif nombre == "Mapa de estrés":
             semilla = construir_semilla(MATRICULA_1, MATRICULA_2)
-            ruta = CARPETA_MAPAS / "mapa_estres.json"
+            ruta = CARPETA_MAPAS / "3_mapa_estres.json"
             self.mapa_actual = self._cargar_o_generar(
                 ruta, lambda: generar_mapa_estres(MATRICULA_1, MATRICULA_2), semilla)
         elif nombre == "Cargar archivo...":

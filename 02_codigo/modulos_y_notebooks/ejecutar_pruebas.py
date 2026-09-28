@@ -1,19 +1,26 @@
 """
-ejecutar_pruebas.py - Corre BFS sobre los tres mapas de prueba
+ejecutar_pruebas.py - Corre BFS sobre los tres mapas de prueba (sin
+necesidad de la interfaz gráfica), guarda un resumen de métricas en
+04_resultados/metricas.csv, y compara la longitud calculada para el
+mapa sencillo contra el valor esperado a mano (verificación real, no
+solo un mensaje informativo).
 """
+
 import csv
 from pathlib import Path
 
 from bfs import bfs
 from maze import cargar_mapa
 
-CARPETA_MAPAS = Path(__file__).resolve().parent.parent / "03_mapas"
-CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent / "04_resultados"
+# Este archivo vive en 02_codigo/modulos_y_notebooks/, dos niveles bajo la
+# raíz del proyecto: de ahí los tres ".parent" para llegar a la raíz.
+CARPETA_MAPAS = Path(__file__).resolve().parent.parent.parent / "03_mapas" / "mapa_principal_y_pruebas"
+CARPETA_RESULTADOS = Path(__file__).resolve().parent.parent.parent / "04_resultados"
 
 CASOS = [
-    ("Mapa principal", "mapa_principal.json"),
-    ("Mapa sencillo", "mapa_sencillo.json"),
-    ("Mapa de estrés", "mapa_estres.json"),
+    ("Mapa principal", "1_mapa_principal.json"),
+    ("Mapa sencillo", "2_mapa_sencillo.json"),
+    ("Mapa de estrés", "3_mapa_estres.json"),
 ]
 
 RUTA_OPTIMA_ESPERADA_SENCILLO = 12  # calculada a mano: distancia Manhattan (0,0)->(6,6)
@@ -65,6 +72,10 @@ def main():
             escritor.writerows(filas_csv)
         print(f"\nMétricas guardadas en: {ruta_csv}")
 
+    # Verificación real (no solo un mensaje informativo): compara la
+    # longitud que BFS calculó para el mapa sencillo contra el valor
+    # esperado a mano. Si algún cambio futuro rompe el resultado, esto
+    # lo hace visible de inmediato en vez de imprimir un texto fijo.
     resultado_sencillo = next((f for f in filas_csv if f["mapa"] == "Mapa sencillo"), None)
     if resultado_sencillo:
         obtenido = resultado_sencillo["longitud_camino"]
@@ -72,6 +83,7 @@ def main():
         print(f"\nVerificación manual (mapa sencillo): esperado={RUTA_OPTIMA_ESPERADA_SENCILLO}, "
               f"obtenido={obtenido}, coincide={coincide}")
         assert coincide, "La longitud calculada no coincide con la verificación manual."
+
 
 if __name__ == "__main__":
     main()

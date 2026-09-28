@@ -1,5 +1,10 @@
 """
 bfs.py - Búsqueda en Amplitud (BFS) propia, sin librerías externas.
+
+Cola FIFO con deque. El diccionario 'parent' marca un estado como
+visitado en el momento en que ENTRA a la cola (no cuando se expande),
+y guarda además quién es su padre. La meta se comprueba al RETIRAR
+un estado de la cola, para garantizar la profundidad mínima real.
 """
 
 import time
@@ -76,7 +81,7 @@ def bfs(grid, inicio, meta, registrar_pasos=True):
 
         for vecino in vecinos(grid, estado):
             if vecino in parent:
-                continue  # ya alcanzado antes, no se agrega de nuevo
+                continue  # ya alcanzado antes: no se agrega de nuevo
             parent[vecino] = estado
             frontera.append(vecino)
 

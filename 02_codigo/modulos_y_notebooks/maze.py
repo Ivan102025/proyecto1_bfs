@@ -1,5 +1,4 @@
-"""
-maze.py - Generación y validación de mapas (laberintos).
+"""maze.py - Generación y validación de mapas (laberintos)
 """
 
 import json
@@ -13,12 +12,14 @@ DIRECCIONES = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # puntos cardinales
 LIBRE = 0
 OBSTACULO = 1
 
+
 def construir_semilla(matricula_1: str, matricula_2: str) -> int:
-    """Ordena ambas matrículas y las concatena en un entero (la semilla)..
+    """Ordena ambas matrículas y las concatena en un entero (la semilla).
     """
     m1 = str(matricula_1).strip()
     m2 = str(matricula_2).strip()
     return int("".join(sorted([m1, m2])))
+
 
 def _conectados_desde(grid, inicio):
     """Devuelve el conjunto de celdas libres alcanzables desde 'inicio'."""
@@ -36,6 +37,7 @@ def _conectados_desde(grid, inicio):
                     pila.append(vecino)
     return visitados
 
+
 def _tiene_callejones(grid):
     """True si existe una celda libre con exactamente 1 vecino libre."""
     filas, columnas = len(grid), len(grid[0])
@@ -52,6 +54,7 @@ def _tiene_callejones(grid):
                 return True
     return False
 
+
 def _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta):
     """Coloca obstáculos al azar (con rng) dejando libres inicio y meta."""
     grid = [[LIBRE for _ in range(columnas)] for _ in range(filas)]
@@ -66,8 +69,17 @@ def _generar_intento(rng, filas, columnas, pct_obstaculos, inicio, meta):
         grid[f][c] = OBSTACULO
     return grid
 
+
 def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
                   pct_obstaculos=0.28, longitud_minima=25, max_intentos=1000):
+    """Genera un mapa reproducible que cumple todas las condiciones
+    obligatorias: tamaño mínimo, % de obstáculos, conectividad,
+    ruta óptima mínima y presencia de callejones sin salida.
+
+    Prueba semillas derivadas (semilla_base + intento) hasta encontrar
+    un candidato válido; con las mismas matrículas siempre da el mismo
+    resultado final, sin importar cuántas veces se ejecute.
+    """
     if filas < 25 or columnas < 25:
         raise ValueError("El mapa debe tener al menos 25 filas y 25 columnas.")
     if not (0.20 <= pct_obstaculos <= 0.35):
@@ -107,6 +119,7 @@ def generar_mapa(matricula_1, matricula_2, filas=25, columnas=25,
         "ajuste los parámetros (tamaño, % de obstáculos o longitud mínima)."
     )
 
+
 def generar_mapa_sencillo():
     """Mapa 7x7 verificable a mano: muro con un único hueco en la fila 3.
     Ruta óptima esperada = distancia Manhattan (0,0)->(6,6) = 12 movimientos.
@@ -128,6 +141,7 @@ def generar_mapa_sencillo():
         "descripcion": "Caso sencillo verificable a mano (ruta óptima esperada: 12 movimientos)",
     }
 
+
 def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
                          pct_obstaculos=0.35):
     """Mapa grande con el porcentaje máximo de obstáculos permitido.
@@ -140,11 +154,13 @@ def generar_mapa_estres(matricula_1, matricula_2, filas=30, columnas=30,
         longitud_minima=1,
     )
 
+
 def guardar_mapa(mapa: dict, ruta: str):
     """Guarda un mapa como JSON, creando la carpeta destino si falta."""
     Path(ruta).parent.mkdir(parents=True, exist_ok=True)
     with open(ruta, "w", encoding="utf-8") as f:
         json.dump(mapa, f, ensure_ascii=False, indent=2)
+
 
 def cargar_mapa(ruta: str) -> dict:
     """Lee un mapa guardado en JSON y lo devuelve como diccionario."""

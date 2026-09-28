@@ -1,0 +1,80 @@
+{
+  "semilla": null,
+  "filas": 7,
+  "columnas": 7,
+  "pct_obstaculos": null,
+  "inicio": [
+    0,
+    0
+  ],
+  "meta": [
+    6,
+    6
+  ],
+  "grid": [
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ]
+  ],
+  "descripcion": "Caso sencillo verificable a mano (ruta óptima esperada: 12 movimientos)"
+}
